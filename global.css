@@ -4,12 +4,6 @@
 
 @import "nativewind/theme";
 
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
-
-@import "nativewind/theme";
-
 @theme {
   --color-background: #fff9e3;
   --color-foreground: #081126;
@@ -22,13 +16,6 @@
   --color-success: #16a34a;
   --color-destructive: #dc2626;
   --color-subscription: #8fd1bd;
-
-  --font-sans: sans-regular;
-  --font-sans-light: sans-light;
-  --font-sans-medium: sans-medium;
-  --font-sans-semibold: sans-semibold;
-  --font-sans-bold: sans-bold;
-  --font-sans-extrabold: sans-extrabold;
 
   --spacing-0: 0px;
   --spacing-1: 4px;
@@ -92,7 +79,14 @@
   }
 
   .home-add-icon {
-    @apply size-12;
+    @apply size-12 
+         flex 
+         items-center 
+         justify-center 
+         rounded-full 
+         border 
+         border-neutral-300 
+         p-2;
   }
 
   .home-balance-card {
@@ -132,7 +126,13 @@
   }
 
   .upcoming-card {
-    @apply mr-4 w-44 rounded-2xl border border-black/10 bg-background p-4;
+    @apply mr-4 
+         w-44 
+         rounded-[20px] 
+         border-2 
+         border-neutral-800/80 
+         bg-background 
+         p-4;
   }
 
   .upcoming-row {
