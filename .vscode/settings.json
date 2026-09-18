@@ -3,5 +3,15 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
+  },
+  "files.associations": {
+    "*.tsx": "typescriptreact"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescriptreact": "typescriptreact"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on",
+    "other": "on"
   }
 }
