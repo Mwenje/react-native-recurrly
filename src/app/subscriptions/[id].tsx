@@ -6,7 +6,7 @@ function SubcriptionDetails() {
 
   return (
     <View>
-      <Text>Subcription Details:{id}</Text>
+      <Text>Subscription Details: {id}</Text>
 
       <Link href="/">Go Back</Link>
     </View>

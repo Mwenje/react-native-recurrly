@@ -5,7 +5,7 @@ function SignUp() {
   return (
     <View>
       <Text>SignUp</Text>
-      <Link href="/(auth)/sign-up">Sign In</Link>
+      <Link href="/(auth)/sign-up">Sign Up</Link>
     </View>
   );
 }
