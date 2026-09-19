@@ -3,8 +3,10 @@ import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
 import { Redirect, SplashScreen, Stack, useSegments } from "expo-router";
-import { useEffect } from "react";
+import { PostHogProvider, usePostHog } from "posthog-react-native";
+import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { posthog } from "@/config/posthog";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,9 +39,42 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <AuthGate />
+      {posthog ? (
+        <PostHogProvider client={posthog}>
+          <PostHogIdentity />
+          <AuthGate />
+        </PostHogProvider>
+      ) : (
+        <AuthGate />
+      )}
     </ClerkProvider>
   );
+}
+
+function PostHogIdentity() {
+  const posthog = usePostHog();
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
+  const identifiedUserId = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!isSignedIn || !user?.id || identifiedUserId.current === user.id) {
+      return;
+    }
+
+    posthog.identify(user.id, {
+      $set: {
+        ...(user.primaryEmailAddress?.emailAddress
+          ? { email: user.primaryEmailAddress.emailAddress }
+          : {}),
+        ...(user.firstName ? { first_name: user.firstName } : {}),
+        ...(user.lastName ? { last_name: user.lastName } : {}),
+      },
+    });
+    identifiedUserId.current = user.id;
+  }, [isSignedIn, posthog, user]);
+
+  return null;
 }
 
 function AuthGate() {

@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/config/posthog";
 import {
   getClerkErrorMessage,
   validateCode,
@@ -110,7 +111,12 @@ function SignUp() {
     }
 
     const { error: finalizeError } = await signUp.finalize();
-    if (finalizeError) setFormError(getClerkErrorMessage(finalizeError));
+    if (finalizeError) {
+      setFormError(getClerkErrorMessage(finalizeError));
+      return;
+    }
+
+    posthog?.capture("user_signed_up");
   }
 
   async function handleResend() {
@@ -146,7 +152,7 @@ function SignUp() {
                 <Text className="auth-logo-mark-text">R</Text>
               </View>
               <View>
-                <Text className="auth-wordmark">Recurly</Text>
+                <Text className="auth-wordmark mb-2">Recurly</Text>
                 <Text className="auth-wordmark-sub">Your money, in rhythm</Text>
               </View>
             </View>

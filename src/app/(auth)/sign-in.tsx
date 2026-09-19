@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/config/posthog";
 import {
   getClerkErrorMessage,
   validateCode,
@@ -132,7 +133,12 @@ function SignIn() {
     }
 
     const { error: finalizeError } = await signIn.finalize();
-    if (finalizeError) setFormError(getClerkErrorMessage(finalizeError));
+    if (finalizeError) {
+      setFormError(getClerkErrorMessage(finalizeError));
+      return;
+    }
+
+    posthog?.capture("user_signed_in");
   }
 
   async function handleVerification() {
@@ -173,7 +179,12 @@ function SignIn() {
     }
 
     const { error: finalizeError } = await signIn.finalize();
-    if (finalizeError) setFormError(getClerkErrorMessage(finalizeError));
+    if (finalizeError) {
+      setFormError(getClerkErrorMessage(finalizeError));
+      return;
+    }
+
+    posthog?.capture("user_signed_in");
   }
 
   async function handleResendCode() {

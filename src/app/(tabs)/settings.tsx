@@ -3,6 +3,7 @@ import { styled } from "nativewind";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/config/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -16,6 +17,8 @@ function Settings() {
     setIsSigningOut(true);
     try {
       await signOut();
+      posthog?.capture("user_signed_out");
+      posthog?.reset();
     } catch {
       setSignOutError("We couldn't sign you out. Please try again.");
     } finally {
