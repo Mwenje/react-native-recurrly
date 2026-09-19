@@ -22,6 +22,7 @@ import {
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the password-based sign-in flow. */
 function SignIn() {
   const { isSignedIn } = useAuth();
   const { signIn, fetchStatus } = useSignIn();
@@ -34,6 +35,7 @@ function SignIn() {
 
   if (isSignedIn) return null;
 
+  /** Validates and submits the current credentials to Clerk. */
   async function handleSubmit() {
     const nextErrors: AuthFieldErrors = {};
     const emailError = validateEmail(email);

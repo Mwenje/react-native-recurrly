@@ -14,6 +14,7 @@ if (!publishableKey) {
   throw new Error("Add your Clerk publishable key to the .env file");
 }
 
+/** Loads app fonts and mounts the authenticated navigation tree. */
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "sans-regular": require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
@@ -42,6 +43,7 @@ export default function RootLayout() {
   );
 }
 
+/** Routes users according to their authentication and onboarding state. */
 function AuthGate() {
   const segments = useSegments();
   const { isLoaded: authLoaded, isSignedIn } = useAuth();
@@ -69,6 +71,7 @@ function AuthGate() {
   return <Stack screenOptions={{ headerShown: false }} />;
 }
 
+/** Renders a centered loading indicator while authentication initializes. */
 function LoadingScreen() {
   return (
     <View className="flex-1 items-center justify-center bg-background">

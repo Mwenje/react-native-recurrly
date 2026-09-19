@@ -6,10 +6,12 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders account settings and sign-out controls. */
 function Settings() {
   const { signOut } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  /** Signs the current user out while maintaining button loading state. */
   async function handleSignOut() {
     setIsSigningOut(true);
     try {

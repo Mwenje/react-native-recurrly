@@ -19,6 +19,7 @@ import { formatCurrency } from "../../../lib/utils";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the personalized subscription dashboard. */
 export default function App() {
   const { user } = useUser();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<

@@ -24,6 +24,7 @@ import {
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders account creation and email verification. */
 function SignUp() {
   const { isSignedIn } = useAuth();
   const { signUp, fetchStatus } = useSignUp();
@@ -39,6 +40,7 @@ function SignUp() {
 
   if (isSignedIn) return null;
 
+  /** Validates the form, creates the account, and requests a verification code. */
   async function handleSignUp() {
     const nextErrors: AuthFieldErrors = {};
     const emailError = validateEmail(email);
@@ -82,6 +84,7 @@ function SignUp() {
     setIsVerifying(true);
   }
 
+  /** Verifies the submitted email code and finalizes the Clerk session. */
   async function handleVerify() {
     const codeError = validateCode(code);
     setErrors(codeError ? { code: codeError } : {});
@@ -113,6 +116,7 @@ function SignUp() {
     if (finalizeError) setFormError(getClerkErrorMessage(finalizeError));
   }
 
+  /** Requests a replacement verification code for the current email. */
   async function handleResend() {
     setFormError("");
     const { error } = await signUp.verifications.sendEmailCode();
@@ -120,6 +124,7 @@ function SignUp() {
       setFormError(getClerkErrorMessage(error, "We couldn't send a new code."));
   }
 
+  /** Resets the in-progress sign-up flow so another email can be used. */
   async function handleStartOver() {
     await signUp.reset();
     setCode("");
