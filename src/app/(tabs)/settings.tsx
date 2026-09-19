@@ -9,11 +9,15 @@ const SafeAreaView = styled(RNSafeAreaView);
 function Settings() {
   const { signOut } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState("");
 
   async function handleSignOut() {
+    setSignOutError("");
     setIsSigningOut(true);
     try {
       await signOut();
+    } catch {
+      setSignOutError("We couldn't sign you out. Please try again.");
     } finally {
       setIsSigningOut(false);
     }
@@ -23,6 +27,9 @@ function Settings() {
     <SafeAreaView className="flex-1 bg-background p-5">
       <View className="gap-6">
         <Text className="text-3xl font-sans-bold text-primary">Settings</Text>
+        {signOutError ? (
+          <Text className="auth-error">{signOutError}</Text>
+        ) : null}
         <Pressable
           accessibilityRole="button"
           className="auth-secondary-button"

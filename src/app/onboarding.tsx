@@ -2,13 +2,8 @@ import { useUser } from "@clerk/expo";
 import { router } from "expo-router";
 import { styled } from "nativewind";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  SafeAreaView as RNSafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { getClerkErrorMessage } from "../../lib/auth";
 
 const SafeAreaView = styled(RNSafeAreaView);
