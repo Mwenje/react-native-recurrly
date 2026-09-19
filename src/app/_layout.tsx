@@ -1,9 +1,18 @@
 import "@/global.css";
+import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
+import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Redirect, SplashScreen, Stack, useSegments } from "expo-router";
 import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
+
+if (!publishableKey) {
+  throw new Error("Add your Clerk publishable key to the .env file");
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -26,5 +35,44 @@ export default function RootLayout() {
 
   if (!fontsLoaded) return null;
 
+  return (
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <AuthGate />
+    </ClerkProvider>
+  );
+}
+
+function AuthGate() {
+  const segments = useSegments();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
+  const { isLoaded: userLoaded, user } = useUser();
+  const isOnboardingComplete =
+    user?.unsafeMetadata?.onboardingCompleted === true;
+  const currentGroup = segments[0];
+
+  if (!authLoaded || !userLoaded) {
+    return <LoadingScreen />;
+  }
+
+  if (!isSignedIn && currentGroup !== "(auth)") {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
+
+  if (isSignedIn && !isOnboardingComplete && currentGroup !== "onboarding") {
+    return <Redirect href="/onboarding" />;
+  }
+
+  if (isSignedIn && isOnboardingComplete && currentGroup !== "(tabs)") {
+    return <Redirect href="/(tabs)" />;
+  }
+
   return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+function LoadingScreen() {
+  return (
+    <View className="flex-1 items-center justify-center bg-background">
+      <ActivityIndicator color="#ea7a53" size="small" />
+    </View>
+  );
 }
