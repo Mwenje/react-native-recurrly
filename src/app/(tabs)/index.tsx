@@ -1,4 +1,5 @@
 import "@/global.css";
+import { useUser } from "@clerk/expo";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
@@ -10,7 +11,6 @@ import UpcomingSubscriptionCard from "../../../components/UpcomingSubscriptionCa
 import {
   HOME_BALANCE,
   HOME_SUBSCRIPTIONS,
-  HOME_USER,
   UPCOMING_SUBSCRIPTIONS,
 } from "../../../constants/data";
 import { icons } from "../../../constants/icons";
@@ -19,7 +19,9 @@ import { formatCurrency } from "../../../lib/utils";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the personalized subscription dashboard. */
 export default function App() {
+  const { user } = useUser();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -31,8 +33,17 @@ export default function App() {
           <>
             <View className="home-header">
               <View className="home-user">
-                <Image source={images.avatar} className="home-avatar" />
-                <Text className="home-user-name">{HOME_USER.name}</Text>
+                <Image
+                  source={
+                    user?.imageUrl ? { uri: user.imageUrl } : images.avatar
+                  }
+                  className="home-avatar"
+                />
+                <Text className="home-user-name">
+                  {user?.fullName ||
+                    user?.primaryEmailAddress?.emailAddress ||
+                    "Your account"}
+                </Text>
               </View>
 
               <Image source={icons.add} className="home-add-icon" />
