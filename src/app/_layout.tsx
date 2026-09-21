@@ -1,3 +1,4 @@
+import { posthog } from "@/config/posthog";
 import "@/global.css";
 import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
@@ -6,7 +7,6 @@ import { Redirect, SplashScreen, Stack, useSegments } from "expo-router";
 import { PostHogProvider, usePostHog } from "posthog-react-native";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { posthog } from "@/config/posthog";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,7 +58,13 @@ function PostHogIdentity() {
   const identifiedUserId = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!isSignedIn || !user?.id || identifiedUserId.current === user.id) {
+    if (!isSignedIn) {
+      identifiedUserId.current = undefined;
+      posthog.reset();
+      return;
+    }
+
+    if (!user?.id || identifiedUserId.current === user.id) {
       return;
     }
 

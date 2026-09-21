@@ -1,3 +1,4 @@
+import { posthog } from "@/config/posthog";
 import { useAuth, useSignIn } from "@clerk/expo";
 import { Link } from "expo-router";
 import { styled } from "nativewind";
@@ -13,7 +14,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import { posthog } from "@/config/posthog";
 import {
   getClerkErrorMessage,
   validateCode,
@@ -142,7 +142,12 @@ function SignIn() {
   }
 
   async function handleVerification() {
-    const codeError = validateCode(verificationCode);
+    const codeError =
+      verificationStrategy === "backup_code"
+        ? verificationCode.trim()
+          ? ""
+          : "Enter your backup code."
+        : validateCode(verificationCode);
     setFormError(codeError);
     if (codeError || !verificationStrategy) return;
 
@@ -253,7 +258,11 @@ function SignIn() {
                     autoFocus
                     autoCapitalize="none"
                     className="auth-input auth-code-input"
-                    keyboardType="number-pad"
+                    keyboardType={
+                      verificationStrategy === "backup_code"
+                        ? "default"
+                        : "number-pad"
+                    }
                     maxLength={verificationStrategy === "backup_code" ? 20 : 6}
                     onChangeText={(value) => {
                       setVerificationCode(

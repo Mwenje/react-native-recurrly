@@ -31,6 +31,9 @@ function SubscriptionCard({
     typeof icon.uri === "string"
       ? icon.uri
       : null;
+  const isRemoteSvg =
+    remoteIconUri !== null &&
+    remoteIconUri.split("?", 1)[0].toLowerCase().endsWith(".svg");
 
   return (
     <Pressable
@@ -40,7 +43,7 @@ function SubscriptionCard({
     >
       <View className="sub-head">
         <View className="sub-main">
-          {remoteIconUri ? (
+          {isRemoteSvg ? (
             <View className="sub-icon overflow-hidden">
               <SvgUri uri={remoteIconUri} width={64} height={64} />
             </View>

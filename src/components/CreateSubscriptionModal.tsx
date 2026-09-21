@@ -1,6 +1,7 @@
+import { posthog } from "@/config/posthog";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -55,8 +56,9 @@ function CreateSubscriptionModal({
     useState<(typeof categories)[number]>("Other");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isResolvingIcon, setIsResolvingIcon] = useState(false);
+  const activeSubmissionId = useRef(0);
 
-  const parsedPrice = Number.parseFloat(price);
+  const parsedPrice = Number(price.trim());
   const hasValidName = name.trim().length > 0;
   const hasValidPrice = Number.isFinite(parsedPrice) && parsedPrice > 0;
   const isValid = hasValidName && hasValidPrice;
@@ -70,6 +72,7 @@ function CreateSubscriptionModal({
   }
 
   function handleClose() {
+    activeSubmissionId.current += 1;
     resetForm();
     onClose();
   }
@@ -79,6 +82,7 @@ function CreateSubscriptionModal({
 
     if (!isValid) return;
 
+    const submissionId = ++activeSubmissionId.current;
     setIsResolvingIcon(true);
 
     try {
@@ -104,7 +108,14 @@ function CreateSubscriptionModal({
         color: categoryColors[category],
       };
 
+      if (activeSubmissionId.current !== submissionId) return;
       onCreated(subscription);
+      posthog?.capture("subscription_created", {
+        subscription_name: subscription.name,
+        subscription_price: subscription.price,
+        subscription_frequency: subscription.frequency ?? frequency,
+        subscription_category: subscription.category ?? category,
+      });
       resetForm();
       onClose();
     } finally {
