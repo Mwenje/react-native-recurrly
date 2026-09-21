@@ -1,27 +1,27 @@
+import { posthog } from "@/config/posthog";
 import "@/global.css";
 import { useUser } from "@clerk/expo";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import { posthog } from "@/config/posthog";
 import ListHeading from "../../../components/ListHeading";
 import SubscriptionCard from "../../../components/SubscriptionCard";
 import UpcomingSubscriptionCard from "../../../components/UpcomingSubscriptionCard";
-import {
-  HOME_BALANCE,
-  HOME_SUBSCRIPTIONS,
-  UPCOMING_SUBSCRIPTIONS,
-} from "../../../constants/data";
+import { HOME_BALANCE, UPCOMING_SUBSCRIPTIONS } from "../../../constants/data";
 import { icons } from "../../../constants/icons";
 import images from "../../../constants/images";
 import { formatCurrency } from "../../../lib/utils";
+import CreateSubscriptionModal from "../../components/CreateSubscriptionModal";
+import { useSubscriptions } from "../../context/SubscriptionContext";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
   const { user } = useUser();
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const { subscriptions, addSubscription } = useSubscriptions();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -46,7 +46,14 @@ export default function App() {
                 </Text>
               </View>
 
-              <Image source={icons.add} className="home-add-icon" />
+              <Pressable
+                accessibilityLabel="Add subscription"
+                accessibilityRole="button"
+                className="home-add-icon"
+                onPress={() => setIsCreateModalVisible(true)}
+              >
+                <Image source={icons.add} className="size-6" />
+              </Pressable>
             </View>
 
             <View className="home-balance-card">
@@ -85,7 +92,7 @@ export default function App() {
             <ListHeading title="All Subscriptions" />
           </>
         )}
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <SubscriptionCard
@@ -109,18 +116,11 @@ export default function App() {
         }
         contentContainerClassName="pb-30"
       />
-      {/* 
-        <SubscriptionCard
-          {...HOME_SUBSCRIPTIONS[0]}
-          expanded={expandedSubscriptionId === HOME_SUBSCRIPTIONS[0].id}
-          onPress={() =>
-            setExpandedSubscriptionId((currentId) =>
-              currentId === HOME_SUBSCRIPTIONS[0].id
-                ? null
-                : HOME_SUBSCRIPTIONS[0].id,
-            )
-          }
-        /> */}
+      <CreateSubscriptionModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        onCreated={addSubscription}
+      />
     </SafeAreaView>
   );
 }

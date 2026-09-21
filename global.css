@@ -235,6 +235,18 @@
     @apply font-sans-bold text-background;
   }
 
+  .subscription-screen-title {
+    @apply mb-5 text-3xl font-sans-bold text-primary;
+  }
+
+  .subscription-search {
+    @apply mb-5 h-14 rounded-2xl border border-border bg-card px-4 text-base font-sans-medium text-primary;
+  }
+
+  .subscription-empty-state {
+    @apply py-4 text-sm font-sans-medium text-muted-foreground;
+  }
+
   .home-empty-state {
     @apply py-4 text-sm font-sans-medium text-black/60;
   }
@@ -304,10 +316,9 @@
   }
 
   .auth-input {
-  /* Change py-4 to h-14 py-2 */
-  @apply h-14 rounded-2xl border border-border bg-background px-4 py-2 text-base font-sans-medium text-primary;
-}
-
+    /* Change py-4 to h-14 py-2 */
+    @apply h-14 rounded-2xl border border-border bg-background px-4 py-2 text-base font-sans-medium text-primary;
+  }
 
   .auth-input-row {
     @apply flex-row items-center;
