@@ -9,6 +9,7 @@ import { getClerkErrorMessage } from "../../lib/auth";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the onboarding completion screen for signed-in users. */
 export default function Onboarding() {
   const { isLoaded, user } = useUser();
   const [error, setError] = useState("");
@@ -18,6 +19,7 @@ export default function Onboarding() {
 
   const currentUser = user;
 
+  /** Marks onboarding complete and navigates to the main tab screen. */
   async function handleContinue() {
     setError("");
     setIsSaving(true);

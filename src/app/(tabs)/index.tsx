@@ -18,6 +18,7 @@ import { useSubscriptions } from "../../context/SubscriptionContext";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders the personalized subscription dashboard. */
 export default function App() {
   const { user } = useUser();
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
