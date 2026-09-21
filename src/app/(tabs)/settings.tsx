@@ -1,9 +1,9 @@
+import { posthog } from "@/config/posthog";
 import { useAuth } from "@clerk/expo";
 import { styled } from "nativewind";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-import { posthog } from "@/config/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -20,11 +20,17 @@ function Settings() {
     try {
       await signOut();
       posthog?.capture("user_signed_out");
-      posthog?.reset();
     } catch {
       setSignOutError("We couldn't sign you out. Please try again.");
+      return;
     } finally {
       setIsSigningOut(false);
+    }
+
+    try {
+      posthog?.reset();
+    } catch {
+      setSignOutError("You were signed out, but analytics could not reset.");
     }
   }
 

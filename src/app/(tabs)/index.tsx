@@ -9,7 +9,7 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import ListHeading from "../../../components/ListHeading";
 import SubscriptionCard from "../../../components/SubscriptionCard";
 import UpcomingSubscriptionCard from "../../../components/UpcomingSubscriptionCard";
-import { HOME_BALANCE, UPCOMING_SUBSCRIPTIONS } from "../../../constants/data";
+import { HOME_BALANCE } from "../../../constants/data";
 import { icons } from "../../../constants/icons";
 import images from "../../../constants/images";
 import { formatCurrency } from "../../../lib/utils";
@@ -17,6 +17,22 @@ import CreateSubscriptionModal from "../../components/CreateSubscriptionModal";
 import { useSubscriptions } from "../../context/SubscriptionContext";
 
 const SafeAreaView = styled(RNSafeAreaView);
+
+function getNextRenewalDate(subscription: Subscription, now: dayjs.Dayjs) {
+  if (!subscription.renewalDate) return null;
+
+  const renewalDate = dayjs(subscription.renewalDate);
+  if (!renewalDate.isValid()) return null;
+
+  const interval = subscription.billing === "Yearly" ? "year" : "month";
+  let nextRenewalDate = renewalDate;
+
+  while (!nextRenewalDate.isAfter(now)) {
+    nextRenewalDate = nextRenewalDate.add(1, interval);
+  }
+
+  return nextRenewalDate;
+}
 
 /** Renders the personalized subscription dashboard. */
 export default function App() {
@@ -26,6 +42,26 @@ export default function App() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
+  const now = dayjs();
+  const upcomingSubscriptions = subscriptions
+    .filter((subscription) => subscription.status === "active")
+    .map((subscription) => {
+      const nextRenewalDate = getNextRenewalDate(subscription, now);
+      if (!nextRenewalDate) return null;
+
+      return {
+        id: subscription.id,
+        icon: subscription.icon,
+        name: subscription.name,
+        price: subscription.price,
+        currency: subscription.currency,
+        daysLeft: Math.max(0, nextRenewalDate.diff(now, "day")),
+        nextRenewalDate,
+      };
+    })
+    .filter((subscription) => subscription !== null)
+    .sort((first, second) => first.nextRenewalDate.diff(second.nextRenewalDate))
+    .slice(0, 3);
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
@@ -75,7 +111,7 @@ export default function App() {
               <ListHeading title="Upcoming" />
 
               <FlatList
-                data={UPCOMING_SUBSCRIPTIONS}
+                data={upcomingSubscriptions}
                 renderItem={({ item }) => (
                   <UpcomingSubscriptionCard {...item} />
                 )}

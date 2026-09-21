@@ -58,9 +58,14 @@ function CreateSubscriptionModal({
   const [isResolvingIcon, setIsResolvingIcon] = useState(false);
   const activeSubmissionId = useRef(0);
 
-  const parsedPrice = Number(price.trim());
+  const normalizedPrice = price.trim();
+  const parsedPrice = Number(normalizedPrice);
   const hasValidName = name.trim().length > 0;
-  const hasValidPrice = Number.isFinite(parsedPrice) && parsedPrice > 0;
+  const hasValidPrice =
+    normalizedPrice.length > 0 &&
+    /^\d+(?:\.\d{1,2})?$/.test(normalizedPrice) &&
+    Number.isFinite(parsedPrice) &&
+    parsedPrice > 0;
   const isValid = hasValidName && hasValidPrice;
 
   function resetForm() {

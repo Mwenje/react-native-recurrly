@@ -69,16 +69,11 @@ function PostHogIdentity() {
       return;
     }
 
-    posthog.identify(user.id, {
-      $set: {
-        ...(user.primaryEmailAddress?.emailAddress
-          ? { email: user.primaryEmailAddress.emailAddress }
-          : {}),
-        ...(user.firstName ? { first_name: user.firstName } : {}),
-        ...(user.lastName ? { last_name: user.lastName } : {}),
-      },
-    });
-    identifiedUserId.current = user.id;
+    const sanitizedUserId = user.id.trim();
+    if (!sanitizedUserId) return;
+
+    posthog.identify(sanitizedUserId);
+    identifiedUserId.current = sanitizedUserId;
   }, [isSignedIn, posthog, user]);
 
   return null;
