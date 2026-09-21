@@ -7,11 +7,13 @@ import { posthog } from "@/config/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/** Renders account settings and sign-out controls. */
 function Settings() {
   const { signOut } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState("");
 
+  /** Signs the current user out while maintaining button loading state. */
   async function handleSignOut() {
     setSignOutError("");
     setIsSigningOut(true);
