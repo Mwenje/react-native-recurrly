@@ -2,13 +2,9 @@ import { useUser } from "@clerk/expo";
 import { router } from "expo-router";
 import { styled } from "nativewind";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  SafeAreaView as RNSafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { posthog } from "@/config/posthog";
 import { getClerkErrorMessage } from "../../lib/auth";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -32,6 +28,7 @@ export default function Onboarding() {
       await currentUser.updateMetadata({
         unsafeMetadata: { onboardingCompleted: true },
       });
+      posthog?.capture("onboarding_completed");
       router.replace("/(tabs)");
     } catch (caughtError) {
       setError(

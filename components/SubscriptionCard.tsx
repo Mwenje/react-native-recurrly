@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { Image, Pressable, Text, View } from "react-native";
+import { SvgUri } from "react-native-svg";
 import {
   formatCurrency,
   formatStatusLabel,
@@ -22,6 +23,15 @@ function SubscriptionCard({
   onPress,
   expanded,
 }: SubscriptionCardProps) {
+  const remoteIconUri =
+    typeof icon === "object" &&
+    icon !== null &&
+    !Array.isArray(icon) &&
+    "uri" in icon &&
+    typeof icon.uri === "string"
+      ? icon.uri
+      : null;
+
   return (
     <Pressable
       onPress={onPress}
@@ -30,7 +40,13 @@ function SubscriptionCard({
     >
       <View className="sub-head">
         <View className="sub-main">
-          <Image source={icon} className="sub-icon" />
+          {remoteIconUri ? (
+            <View className="sub-icon overflow-hidden">
+              <SvgUri uri={remoteIconUri} width={64} height={64} />
+            </View>
+          ) : (
+            <Image source={icon} className="sub-icon" />
+          )}
           <View className="sub-copy">
             <Text className="sub-title" numberOfLines={1}>
               {name}
